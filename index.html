@@ -636,21 +636,54 @@
                         <label for="region"><i class="fas fa-map-marker-alt"></i> Регион</label>
                         <select id="region">
                             <option value="">Выберите регион</option>
-                            <option value="Москва">Москва</option>
-                            <option value="Санкт-Петербург">Санкт-Петербург</option>
-                            <option value="Новосибирск">Новосибирск</option>
-                            <option value="Екатеринбург">Екатеринбург</option>
-                            <option value="Казань">Казань</option>
-                            <option value="Нижний Новгород">Нижний Новгород</option>
-                            <option value="Челябинск">Челябинск</option>
-                            <option value="Самара">Самара</option>
-                            <option value="Омск">Омск</option>
-                            <option value="Ростов-на-Дону">Ростов-на-Дону</option>
-                            <option value="Уфа">Уфа</option>
-                            <option value="Красноярск">Красноярск</option>
-                            <option value="Воронеж">Воронеж</option>
-                            <option value="Пермь">Пермь</option>
-                            <option value="Волгоград">Волгоград</option>
+                            <optgroup label="Россия">
+                                <option value="Москва">Москва</option>
+                                <option value="Санкт-Петербург">Санкт-Петербург</option>
+                                <option value="Новосибирск">Новосибирск</option>
+                                <option value="Екатеринбург">Екатеринбург</option>
+                                <option value="Казань">Казань</option>
+                                <option value="Нижний Новгород">Нижний Новгород</option>
+                                <option value="Челябинск">Челябинск</option>
+                                <option value="Самара">Самара</option>
+                                <option value="Омск">Омск</option>
+                                <option value="Ростов-на-Дону">Ростов-на-Дону</option>
+                                <option value="Уфа">Уфа</option>
+                                <option value="Красноярск">Красноярск</option>
+                                <option value="Воронеж">Воронеж</option>
+                                <option value="Пермь">Пермь</option>
+                                <option value="Волгоград">Волгоград</option>
+                            </optgroup>
+                            <optgroup label="Украина">
+                                <option value="Киев">Киев</option>
+                                <option value="Харьков">Харьков</option>
+                                <option value="Одесса">Одесса</option>
+                                <option value="Днепр">Днепр</option>
+                                <option value="Донецк">Донецк</option>
+                                <option value="Запорожье">Запорожье</option>
+                                <option value="Львов">Львов</option>
+                                <option value="Кривой Рог">Кривой Рог</option>
+                                <option value="Николаев">Николаев</option>
+                                <option value="Мариуполь">Мариуполь</option>
+                            </optgroup>
+                            <optgroup label="Беларусь">
+                                <option value="Минск">Минск</option>
+                                <option value="Гомель">Гомель</option>
+                                <option value="Могилев">Могилев</option>
+                                <option value="Витебск">Витебск</option>
+                                <option value="Гродно">Гродно</option>
+                                <option value="Брест">Брест</option>
+                            </optgroup>
+                            <optgroup label="Казахстан">
+                                <option value="Алматы">Алматы</option>
+                                <option value="Нур-Султан">Нур-Султан</option>
+                                <option value="Шымкент">Шымкент</option>
+                                <option value="Караганда">Караганда</option>
+                                <option value="Актобе">Актобе</option>
+                                <option value="Тараз">Тараз</option>
+                                <option value="Павлодар">Павлодар</option>
+                                <option value="Усть-Каменогорск">Усть-Каменогорск</option>
+                                <option value="Семей">Семей</option>
+                            </optgroup>
                         </select>
                     </div>
                     <button id="saveProfile" class="btn">
@@ -704,9 +737,6 @@
                         <button id="nextBtn" class="btn btn-next">
                             <i class="fas fa-user-friends"></i> Следующий
                         </button>
-                        <button id="disconnectChatBtn" class="btn btn-disconnect">
-                            <i class="fas fa-times"></i> Отключиться
-                        </button>
                     </div>
                 </div>
             </div>
@@ -740,7 +770,6 @@
         const saveProfileBtn = document.getElementById('saveProfile');
         const connectBtn = document.getElementById('connectBtn');
         const disconnectBtn = document.getElementById('disconnectBtn');
-        const disconnectChatBtn = document.getElementById('disconnectChatBtn');
         const nextBtn = document.getElementById('nextBtn');
         const connectingScreen = document.getElementById('connectingScreen');
         const chatScreen = document.getElementById('chatScreen');
@@ -762,7 +791,6 @@
         let messageListener = null;
         let partnerDisconnectListener = null;
         let processedMessageIds = new Set(); // Для предотвращения дублирования сообщений
-        let chatCleanupTimer = null;
         let autoScroll = true;
 
         // Show notification
@@ -848,18 +876,6 @@
 
         // Disconnect from main screen
         disconnectBtn.addEventListener('click', () => {
-            disconnectFromChat();
-            connectingScreen.classList.add('hidden');
-            chatScreen.classList.add('hidden');
-            connectBtn.classList.remove('hidden');
-            disconnectBtn.classList.add('hidden');
-            messagesContainer.innerHTML = '';
-            currentPartner = null;
-            showNotification('Вы отключились от чата', 'info');
-        });
-
-        // Disconnect from chat screen
-        disconnectChatBtn.addEventListener('click', () => {
             disconnectFromChat();
             connectingScreen.classList.add('hidden');
             chatScreen.classList.add('hidden');
@@ -979,9 +995,6 @@
             
             // Прокручиваем вниз
             scrollToBottom();
-            
-            // Устанавливаем таймер для очистки чата после завершения сессии
-            clearTimeout(chatCleanupTimer);
         }
 
         // Setup message listeners
@@ -1061,9 +1074,6 @@
             if (currentUser.region) {
                 remove(ref(database, `search_queue/${currentUser.region}/${currentUser.id}`)).catch(console.error);
             }
-            
-            // Очищаем таймер
-            clearTimeout(chatCleanupTimer);
         }
 
         // Get chat ID (sorted user IDs)
@@ -1157,4 +1167,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
