@@ -1,848 +1,996 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SteamKeyDrop</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>🎮 Co-op Finder — Реальный поиск напарников</title>
     <style>
+        :root {
+            --bg: #0f0f1a;
+            --card-bg: #1a1a2e;
+            --accent: #7b68ee;
+            --accent-light: #4fc3f7;
+            --text: #e0e0ff;
+            --text-secondary: #aaaaff;
+            --border: rgba(100, 100, 255, 0.2);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #000000;
-            color: #ffffff;
-            line-height: 1.6;
-            overflow-x: hidden;
-            user-select: none;
-            cursor: default;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            width: 90%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
         }
 
         header {
-            background-color: #1a1a1a;
-            color: #fff;
-            padding: 1.5rem 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 15px rgba(0, 255, 255, 0.6);
-            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
-        }
-
-        header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-        }
-
-        header h1::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            bottom: -5px;
-            background: linear-gradient(90deg, #00ffff, #ffff00);
-            animation: glitchLine 2s infinite;
-        }
-
-        @keyframes glitchLine {
-            0%, 100% { transform: translateX(0); opacity: 1; }
-            50% { transform: translateX(5px); opacity: 0.5; }
-        }
-
-        header h1 i {
-            font-size: 2rem;
-            color: #00ffff;
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
-            animation: pulseIcon 3s infinite;
-        }
-
-        @keyframes pulseIcon {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        nav {
-            display: flex;
-            gap: 15px;
-        }
-
-        nav a {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1rem;
-            transition: color 0.3s, text-shadow 0.3s;
-            cursor: pointer;
-            position: relative;
-            padding: 5px 10px;
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 1px;
-            bottom: -3px;
-            left: 0;
-            background-color: #ffff00;
-            transition: width 0.3s;
-        }
-
-        nav a:hover {
-            color: #ffff00;
-            text-shadow: 0 0 5px rgba(255, 255, 0, 0.7);
-            background: rgba(255, 255, 0, 0.1);
-            border-radius: 5px;
-        }
-
-        nav a:hover::after {
-            width: 100%;
-        }
-
-        #hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             text-align: center;
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
-            background-size: 200% 200%;
-            animation: gradient 15s ease infinite;
-            color: #fff;
-            margin-top: 80px;
-            position: relative;
-            overflow: hidden;
-            cursor: none;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 30px 0;
         }
 
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        h1 {
+            font-size: 2.5em;
+            margin: 0 0 15px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* Cyberpunk Grid Background */
-        .grid-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .main {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .sidebar {
+            flex: 1;
+            min-width: 300px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(100, 100, 255, 0.2);
+        }
+
+        .content {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(100, 100, 255, 0.2);
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
             width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(transparent, transparent 19px, rgba(0, 255, 255, 0.1) 20px, transparent 21px), repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(0, 255, 255, 0.1) 20px, transparent 21px);
-            z-index: 1;
-            opacity: 0.3;
-            pointer-events: none;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(30, 30, 50, 0.8);
+            color: var(--text);
+            font-size: 16px;
         }
 
-        .floating-element {
-            position: absolute;
+        button {
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(123, 104, 238, 0.4);
+        }
+
+        .player-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .player-card {
+            background: rgba(40, 40, 70, 0.6);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .player-card:hover {
+            transform: translateX(5px);
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
+        }
+
+        .player-card h3 {
+            margin: 0 0 10px;
+            color: var(--accent);
+        }
+
+        .player-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .chat-container {
+            height: 400px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+            align-self: flex-start;
+        }
+
+        .message.sent {
+            background: var(--accent);
+            color: white;
+            margin-left: auto;
+            align-self: flex-end;
+        }
+
+        .message.received {
+            background: rgba(40, 40, 70, 0.6);
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--accent);
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .profile-section {
+            display: none;
+        }
+
+        .profile-section.active {
+            display: block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .status.online {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+
+        .status.error {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+
+        .loader {
+            display: inline-block;
             width: 20px;
             height: 20px;
-            background-color: rgba(0, 255, 255, 0.3);
+            border: 3px solid rgba(255,255,255,.3);
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-            animation: float 6s ease-in-out infinite;
-            z-index: 1;
-            transition: background-color 0.5s, box-shadow 0.5s;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+            margin: 10px auto;
         }
 
-        .floating-element:hover {
-            background-color: rgba(255, 255, 0, 0.5);
-            box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        .floating-element:nth-child(2) { left: 10%; top: 20%; animation-duration: 8s; background-color: rgba(255, 255, 0, 0.3); box-shadow: 0 0 10px rgba(255, 255, 0, 0.5); }
-        .floating-element:nth-child(3) { left: 80%; top: 60%; animation-duration: 5s; background-color: rgba(0, 255, 255, 0.3); box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); }
-        .floating-element:nth-child(4) { left: 30%; top: 80%; animation-duration: 7s; background-color: rgba(255, 255, 0, 0.3); box-shadow: 0 0 10px rgba(255, 255, 0, 0.5); }
-        .floating-element:nth-child(5) { left: 70%; top: 30%; animation-duration: 9s; background-color: rgba(0, 255, 255, 0.3); box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); }
-        .floating-element:nth-child(6) { left: 50%; top: 50%; animation-duration: 4s; background-color: rgba(255, 255, 0, 0.3); box-shadow: 0 0 10px rgba(255, 255, 0, 0.5); }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-40px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .interactive-dot {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: rgba(0, 255, 255, 0.6);
-            border-radius: 50%;
-            box-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
-            cursor: pointer;
-            transition: transform 0.3s, background-color 0.3s;
-            z-index: 1;
-        }
-
-        .interactive-dot:hover {
-            transform: scale(1.5);
-            background-color: rgba(255, 255, 0, 0.8);
-            box-shadow: 0 0 10px rgba(255, 255, 0, 0.9);
-        }
-
-        .interactive-dot:nth-child(2) { left: 15%; top: 30%; }
-        .interactive-dot:nth-child(3) { left: 85%; top: 70%; }
-        .interactive-dot:nth-child(4) { left: 25%; top: 85%; }
-        .interactive-dot:nth-child(5) { left: 75%; top: 25%; }
-
-        .spark {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background-color: rgba(255, 255, 0, 0.8);
-            border-radius: 50%;
-            box-shadow: 0 0 8px rgba(255, 255, 0, 0.9);
-            animation: sparkMove 3s ease-in-out infinite;
-            z-index: 1;
-        }
-
-        @keyframes sparkMove {
-            0% { transform: translate(0, 0); opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { transform: translate(30px, -30px); opacity: 0; }
-        }
-
-        .spark:nth-child(2) { left: 50%; top: 20%; animation-duration: 2.5s; animation-delay: 0.2s; background-color: rgba(0, 255, 255, 0.8); box-shadow: 0 0 8px rgba(0, 255, 255, 0.9); }
-        .spark:nth-child(3) { left: 70%; top: 80%; animation-duration: 3.2s; animation-delay: 0.5s; }
-        .spark:nth-child(4) { left: 20%; top: 70%; animation-duration: 2.8s; animation-delay: 0.8s; background-color: rgba(0, 255, 255, 0.8); box-shadow: 0 0 8px rgba(0, 255, 255, 0.9); }
-
-        .cursor-steam {
-            position: fixed;
-            width: 30px;
-            height: 30px;
-            background-color: rgba(0, 255, 255, 0.9);
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.9);
-            z-index: 9999;
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000000;
-            font-size: 14px;
-            transform: translate(-50%, -50%);
-            transition: background-color 0.2s, box-shadow 0.2s;
-        }
-
-        .cursor-steam:hover {
-            background-color: rgba(255, 255, 0, 0.9);
-            box-shadow: 0 0 15px rgba(255, 255, 0, 0.9);
-        }
-
-        @keyframes steamCursor {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.3); }
-        }
-
-        /* Glitch Effect for Text */
-        .glitch {
-            position: relative;
-            display: inline-block;
-        }
-
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            clip: rect(0, 900px, 0, 0);
-        }
-
-        .glitch::before {
-            left: 2px;
-            text-shadow: 1px 0 rgba(255, 0, 0, 0.7);
-            animation: glitch-anim 3s infinite linear alternate-reverse;
-        }
-
-        .glitch::after {
-            left: -2px;
-            text-shadow: -1px 0 rgba(0, 255, 255, 0.7);
-            animation: glitch-anim 2s infinite linear alternate-reverse;
-        }
-
-        @keyframes glitch-anim {
-            0% { clip: rect(0, 9999px, 0, 0); }
-            5% { clip: rect(10px, 9999px, 30px, 0); }
-            10% { clip: rect(50px, 9999px, 70px, 0); }
-            15% { clip: rect(20px, 9999px, 40px, 0); }
-            20% { clip: rect(60px, 9999px, 80px, 0); }
-            25% { clip: rect(30px, 9999px, 50px, 0); }
-            30% { clip: rect(70px, 9999px, 90px, 0); }
-            35% { clip: rect(40px, 9999px, 60px, 0); }
-            40% { clip: rect(80px, 9999px, 100px, 0); }
-            45% { clip: rect(10px, 9999px, 30px, 0); }
-            50% { clip: rect(90px, 9999px, 110px, 0); }
-            55% { clip: rect(20px, 9999px, 40px, 0); }
-            60% { clip: rect(60px, 9999px, 80px, 0); }
-            65% { clip: rect(30px, 9999px, 50px, 0); }
-            70% { clip: rect(70px, 9999px, 90px, 0); }
-            75% { clip: rect(40px, 9999px, 60px, 0); }
-            80% { clip: rect(80px, 9999px, 100px, 0); }
-            85% { clip: rect(10px, 9999px, 30px, 0); }
-            90% { clip: rect(50px, 9999px, 70px, 0); }
-            95% { clip: rect(20px, 9999px, 40px, 0); }
-            100% { clip: rect(0, 9999px, 0, 0); }
-        }
-
-        #hero h2 {
-            font-size: 3.5rem;
-            margin-bottom: 25px;
-            font-weight: 700;
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.6), 0 0 15px rgba(0, 255, 255, 0.3);
-            z-index: 10;
-        }
-
-        #hero p {
-            font-size: 1.3rem;
-            margin-bottom: 35px;
-            max-width: 650px;
-            margin-left: auto;
-            margin-right: auto;
-            text-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
-            z-index: 10;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: #ffff00;
-            color: #000000;
-            padding: 14px 35px;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s, filter 0.1s;
-            box-shadow: 0 0 15px rgba(255, 255, 0, 0.7);
-            z-index: 10;
-            position: relative;
-            overflow: hidden;
-            cursor: none;
-            border: 1px solid rgba(255, 255, 0, 0.5);
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
-            transition: 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:hover {
-            background-color: #e6e600;
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(255, 255, 0, 0.9);
-            animation: glitchButton 0.3s ease-in-out;
-            filter: blur(1px);
-        }
-
-        @keyframes glitchButton {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(2px, 2px); }
-            50% { transform: translate(-2px, -2px); }
-            75% { transform: translate(1px, -1px); }
-            100% { transform: translate(0, 0); }
-        }
-
-        #bot-info {
-            padding: 100px 0;
-            text-align: center;
-            background-color: #000000;
-            box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.3);
-            position: relative;
-            border-top: 1px solid rgba(0, 255, 255, 0.2);
-            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-        }
-
-        #bot-info::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(transparent, transparent 19px, rgba(0, 255, 255, 0.05) 20px, transparent 21px);
-            z-index: 1;
-            opacity: 0.2;
-            pointer-events: none;
-        }
-
-        #bot-info h2 {
-            font-size: 2.8rem;
-            margin-bottom: 30px;
-            color: #fff;
-            font-weight: 700;
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5), 0 0 15px rgba(0, 255, 255, 0.3);
-            z-index: 2;
-            position: relative;
-        }
-
-        #bot-info p {
-            font-size: 1.2rem;
-            margin-bottom: 40px;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            text-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
-            z-index: 2;
-            position: relative;
-        }
-
-        .bot-btn {
-            display: inline-block;
-            background-color: #00ffff;
-            color: #000000;
-            padding: 14px 35px;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s, filter 0.1s;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
-            z-index: 10;
-            position: relative;
-            overflow: hidden;
-            cursor: none;
-            border: 1px solid rgba(0, 255, 255, 0.5);
-        }
-
-        .bot-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 0, 0.3), transparent);
-            transition: 0.5s;
-        }
-
-        .bot-btn:hover::before {
-            left: 100%;
-        }
-
-        .bot-btn:hover {
-            background-color: #00e6e6;
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(0, 255, 255, 0.9);
-            animation: glitchButton 0.3s ease-in-out;
-            filter: blur(1px);
-        }
-
-        .bot-btn i {
-            margin-right: 10px;
-            font-size: 1.5rem;
-        }
-
-        #social {
-            padding: 100px 0;
-            text-align: center;
-            background-color: #000000;
-            box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.3);
-            position: relative;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-        }
-
-        #social::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(transparent, transparent 19px, rgba(0, 255, 255, 0.05) 20px, transparent 21px);
-            z-index: 1;
-            opacity: 0.2;
-            pointer-events: none;
-        }
-
-        #social h2 {
-            font-size: 2.8rem;
-            margin-bottom: 50px;
-            color: #fff;
-            font-weight: 700;
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5), 0 0 15px rgba(0, 255, 255, 0.3);
-            z-index: 2;
-            position: relative;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            flex-wrap: wrap;
-            z-index: 2;
-            position: relative;
-        }
-
-        .social-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 180px;
-            height: 55px;
-            background-color: #1a1a1a;
-            color: #fff;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s, filter 0.1s;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-            font-size: 1.2rem;
-            font-weight: 500;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-            cursor: none;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-        }
-
-        .social-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 0, 0.3), transparent);
-            transition: 0.5s;
-        }
-
-        .social-btn:hover::before {
-            left: 100%;
-        }
-
-        .social-btn:hover {
-            background-color: #ffff00;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
-            color: #000000;
-            animation: glitchButton 0.3s ease-in-out;
-            filter: blur(1px);
-        }
-
-        .social-btn i {
-            font-size: 1.7rem;
-        }
-
-        footer {
-            background-color: #1a1a1a;
-            color: #fff;
-            text-align: center;
-            padding: 25px 0;
-            box-shadow: 0 -2px 15px rgba(0, 255, 255, 0.3);
-            border-top: 1px solid rgba(0, 255, 255, 0.2);
-        }
-
-        /* Адаптивный дизайн для мобильных устройств */
-        @media (max-width: 768px) {
-            header .container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            header h1 {
-                font-size: 1.5rem;
-                margin-bottom: 10px;
-            }
-
-            header h1 i {
-                font-size: 1.8rem;
-            }
-
-            nav {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            nav a {
-                font-size: 0.9rem;
-            }
-
-            #hero h2 {
-                font-size: 2.2rem;
-                margin-bottom: 20px;
-            }
-
-            #hero p {
-                font-size: 1rem;
-                margin-bottom: 30px;
-                max-width: 90%;
-            }
-
-            .btn {
-                padding: 12px 30px;
-                font-size: 1rem;
-            }
-
-            #bot-info {
-                padding: 60px 0;
-            }
-
-            #bot-info h2 {
-                font-size: 2rem;
-                margin-bottom: 25px;
-            }
-
-            #bot-info p {
-                font-size: 1rem;
-                margin-bottom: 30px;
-                max-width: 90%;
-            }
-
-            .bot-btn {
-                padding: 12px 30px;
-                font-size: 1rem;
-            }
-
-            #social {
-                padding: 60px 0;
-            }
-
-            #social h2 {
-                font-size: 2rem;
-                margin-bottom: 30px;
-            }
-
-            .social-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
-            }
-
-            .social-btn {
-                width: 160px;
-                height: 50px;
-                font-size: 1.1rem;
-            }
-
-            .social-btn i {
-                font-size: 1.5rem;
-            }
-
-            footer {
-                padding: 20px 0;
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header {
-                padding: 1rem 0;
-            }
-
-            header h1 {
-                font-size: 1.3rem;
-            }
-
-            header h1 i {
-                font-size: 1.5rem;
-            }
-
-            nav {
-                gap: 10px;
-            }
-
-            nav a {
-                font-size: 0.8rem;
-            }
-
-            #hero h2 {
-                font-size: 1.8rem;
-            }
-
-            #hero p {
-                font-size: 0.9rem;
-            }
-
-            .btn {
-                padding: 10px 25px;
-                font-size: 0.9rem;
-            }
-
-            #bot-info h2 {
-                font-size: 1.8rem;
-            }
-
-            #bot-info p {
-                font-size: 0.9rem;
-            }
-
-            .bot-btn {
-                padding: 10px 25px;
-                font-size: 0.9rem;
-            }
-
-            #social h2 {
-                font-size: 1.8rem;
-            }
-
-            .social-btn {
-                width: 140px;
-                height: 45px;
-                font-size: 1rem;
-            }
-
-            .social-btn i {
-                font-size: 1.3rem;
-            }
+        #firebase-error {
+            background: #ff4757;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1><i class="fab fa-steam"></i> SteamKeyDrop</h1>
-            <nav>
-                <a href="#hero">Главная</a>
-                <a href="#bot-info">О боте</a>
-                <a href="#social">Сообщество</a>
-            </nav>
-        </div>
-    </header>
+    <div class="container">
+        <header>
+            <h1>🎮 Co-op Finder</h1>
+            <p>Настоящие люди. Настоящие кооперативы.</p>
+            <div id="firebase-error"></div>
+            <div id="auth-status" class="status">Инициализация приложения...</div>
+        </header>
 
-    <section id="hero">
-        <div class="grid-overlay"></div>
-        <div class="container">
-            <h2 class="glitch" data-text="Получите свои ключи Steam прямо сейчас!">Получите свои ключи Steam прямо сейчас!</h2>
-            <p>Присоединяйтесь к нашему сообществу в Telegram и выигрывайте удивительные ключи для игр Steam каждый день.</p>
-            <a href="https://t.me/perehod0712" class="btn" target="_blank">Присоединиться</a>
-        </div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="interactive-dot"></div>
-        <div class="interactive-dot"></div>
-        <div class="interactive-dot"></div>
-        <div class="interactive-dot"></div>
-        <div class="spark"></div>
-        <div class="spark"></div>
-        <div class="spark"></div>
-    </section>
+        <div class="main">
+            <div class="sidebar">
+                <div class="tabs">
+                    <div class="tab active" data-tab="search">Поиск игроков</div>
+                    <div class="tab" data-tab="profile">Мой профиль</div>
+                    <div class="tab" data-tab="chat">Чаты</div>
+                </div>
 
-    <section id="bot-info">
-        <div class="container">
-            <h2 class="glitch" data-text="О SteamKeyDrop Боте">О SteamKeyDrop Боте</h2>
-            <p>SteamKeyDrop - это ваш кибернетический помощник в мире бесплатных ключей для игр Steam. Присоединяйтесь к нашему сообществу и получайте доступ к эксклюзивным раздачам каждый день!</p>
-            <a href="http://t.me/Steam_key_free_bot" class="bot-btn" target="_blank"><i class="fas fa-robot"></i> Бот с халявой</a>
-        </div>
-    </section>
+                <div id="search-tab" class="tab-content active">
+                    <div class="card">
+                        <h2>Поиск напарников</h2>
+                        <div class="form-group">
+                            <label for="search-game">Игра</label>
+                            <select id="search-game">
+                                <option value="">Любая игра</option>
+                                <option value="baldurs-gate-3">Baldur's Gate 3</option>
+                                <option value="it-takes-two">It Takes Two</option>
+                                <option value="deep-rock-galactic">Deep Rock Galactic</option>
+                                <option value="overcooked">Overcooked 2</option>
+                                <option value="monster-hunter">Monster Hunter</option>
+                                <option value="elden-ring">Elden Ring</option>
+                                <option value="other">Другая...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="search-platform">Платформа</label>
+                            <select id="search-platform">
+                                <option value="">Любая платформа</option>
+                                <option value="pc">PC (Steam/Epic)</option>
+                                <option value="ps5">PlayStation 5</option>
+                                <option value="xbox">Xbox Series X/S</option>
+                                <option value="switch">Nintendo Switch</option>
+                            </select>
+                        </div>
+                        <button id="search-button">Найти игроков</button>
+                    </div>
 
-    <section id="social">
-        <div class="container">
-            <h2 class="glitch" data-text="Следите за нами">Следите за нами</h2>
-            <div class="social-links">
-                <a href="http://t.me/Steam_key_free_bot" class="social-btn" target="_blank"><i class="fas fa-robot"></i> Бот с халявой</a>
-                <a href="https://t.me/perehod0712" class="social-btn" target="_blank"><i class="fab fa-telegram-plane"></i> Telegram</a>
-                <a href="https://www.tiktok.com/@steamkey_drop?_t=ZT-8vmWzQPidYY&_r=1" class="social-btn" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+                    <div class="card">
+                        <h2>Активные игроки</h2>
+                        <div id="players-list" class="player-list">
+                            <div class="empty-state">
+                                <div class="loader"></div>
+                                <p>Загрузка списка игроков...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="profile-tab" class="tab-content">
+                    <div class="card">
+                        <h2>Ваш профиль</h2>
+                        <div class="form-group">
+                            <label for="username">Имя пользователя</label>
+                            <input type="text" id="username" placeholder="Ваш игровой ник">
+                        </div>
+                        <div class="form-group">
+                            <label for="main-game">Основная игра</label>
+                            <select id="main-game">
+                                <option value="">Выберите игру</option>
+                                <option value="baldurs-gate-3">Baldur's Gate 3</option>
+                                <option value="it-takes-two">It Takes Two</option>
+                                <option value="deep-rock-galactic">Deep Rock Galactic</option>
+                                <option value="overcooked">Overcooked 2</option>
+                                <option value="monster-hunter">Monster Hunter</option>
+                                <option value="elden-ring">Elden Ring</option>
+                                <option value="other">Другая...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="platform">Платформа</label>
+                            <select id="platform">
+                                <option value="">Выберите платформу</option>
+                                <option value="pc">PC (Steam/Epic)</option>
+                                <option value="ps5">PlayStation 5</option>
+                                <option value="xbox">Xbox Series X/S</option>
+                                <option value="switch">Nintendo Switch</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="play-time">Когда играете?</label>
+                            <select id="play-time">
+                                <option value="">Выберите время</option>
+                                <option value="evenings">Вечера (после 19:00)</option>
+                                <option value="weekends">Выходные</option>
+                                <option value="flexible">Гибкий график</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="play-style">Стиль игры</label>
+                            <select id="play-style">
+                                <option value="">Выберите стиль</option>
+                                <option value="casual">Казуал (для фана)</option>
+                                <option value="hardcore">Хардкор (100% прохождение)</option>
+                                <option value="explorer">Исследователь (собираю всё)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mic">Микрофон</label>
+                            <select id="mic">
+                                <option value="yes">Есть, готов общаться</option>
+                                <option value="no">Нет/не использую</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="bio">О себе (необязательно)</label>
+                            <textarea id="bio" rows="3" placeholder="Расскажите о себе, своем стиле игры..."></textarea>
+                        </div>
+                        <button id="save-profile">Сохранить профиль</button>
+                    </div>
+                </div>
+
+                <div id="chat-tab" class="tab-content">
+                    <div class="card">
+                        <h2>Ваши чаты</h2>
+                        <div id="chats-list">
+                            <div class="empty-state">
+                                <div class="loader"></div>
+                                <p>Загрузка чатов...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div id="chat-section" class="profile-section">
+                    <div class="card">
+                        <h2 id="chat-title">Выберите игрока для начала чата</h2>
+                        <div id="chat-container" class="chat-container">
+                            <div class="empty-state">
+                                <p>Выберите игрока из списка, чтобы начать чат</p>
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" id="message-input" placeholder="Введите сообщение..." disabled>
+                            <button id="send-message" disabled>Отправить</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 SteamKeyDrop. Все права защищены.</p>
-        </div>
-    </footer>
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, query, where, onSnapshot, addDoc, orderBy, serverTimestamp, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    <script>
-        // JavaScript для создания интерактивных элементов, следующих за курсором
-        let steamCursor = null;
-        document.addEventListener('mousemove', function(e) {
-            const heroSection = document.getElementById('hero');
-            const rect = heroSection.getBoundingClientRect();
-            
-            if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
-                if (!steamCursor) {
-                    steamCursor = document.createElement('div');
-                    steamCursor.className = 'cursor-steam';
-                    steamCursor.innerHTML = '<i class="fab fa-steam"></i>';
-                    document.body.appendChild(steamCursor);
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgcGshM7QlRy_lE-jeVvv8X5p9bDORy0w",
+            authDomain: "gefd-88f41.firebaseapp.com",
+            projectId: "gefd-88f41",
+            storageBucket: "gefd-88f41.firebasestorage.app",
+            messagingSenderId: "188695764382",
+            appId: "1:188695764382:web:df05c7f5cf7aa246e0ca8f",
+            measurementId: "G-J1R6XETDES"
+        };
+
+        // Initialize Firebase
+        let app, auth, db;
+        let currentUser = null;
+        let currentChatPartner = null;
+        let unsubscribePlayers = null;
+        let unsubscribeChats = null;
+
+        function showError(message) {
+            const errorDiv = document.getElementById('firebase-error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('auth-status').textContent = 'Ошибка: ' + message;
+            document.getElementById('auth-status').className = 'status error';
+        }
+
+        function hideError() {
+            document.getElementById('firebase-error').style.display = 'none';
+        }
+
+        async function initializeFirebase() {
+            try {
+                document.getElementById('auth-status').textContent = 'Инициализация Firebase...';
+                
+                // Initialize Firebase app
+                app = initializeApp(firebaseConfig);
+                
+                // Get services
+                auth = getAuth(app);
+                db = getFirestore(app);
+                
+                // Initialize analytics if available
+                try {
+                    const analytics = getAnalytics(app);
+                } catch (e) {
+                    console.log('Analytics not available in this environment');
                 }
-                steamCursor.style.left = e.clientX + 'px';
-                steamCursor.style.top = e.clientY + 'px';
-            } else {
-                if (steamCursor) {
-                    steamCursor.remove();
-                    steamCursor = null;
-                }
+                
+                document.getElementById('auth-status').textContent = 'Firebase инициализирован! Начинаем авторизацию...';
+                return true;
+            } catch (error) {
+                showError('Ошибка инициализации Firebase: ' + error.message);
+                console.error('Firebase initialization error:', error);
+                return false;
             }
-        });
+        }
 
-        // Плавная прокрутка к разделу при клике на навигационное меню
-        document.querySelectorAll('nav a').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 70, // Учитываем высоту фиксированного заголовка
-                        behavior: 'smooth'
+        // Initialize the app
+        async function initApp() {
+            // First, initialize Firebase
+            const firebaseInitialized = await initializeFirebase();
+            if (!firebaseInitialized) {
+                return;
+            }
+            
+            try {
+                document.getElementById('auth-status').textContent = 'Авторизация анонимного пользователя...';
+                
+                // Wait for auth state to be ready
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        // User is signed in
+                        currentUser = user;
+                        document.getElementById('auth-status').textContent = 'Вы вошли как Игрок ' + currentUser.uid.slice(0, 6);
+                        document.getElementById('auth-status').className = 'status online';
+                        
+                        // Load user profile if exists
+                        await loadUserProfile();
+                        
+                        // Setup UI
+                        initEventListeners();
+                        switchTab('search');
+                        
+                        // Start listening for players
+                        listenForPlayers();
+                    } else {
+                        // No user is signed in, sign in anonymously
+                        try {
+                            const userCredential = await signInAnonymously(auth);
+                            currentUser = userCredential.user;
+                            document.getElementById('auth-status').textContent = 'Вы вошли как Игрок ' + currentUser.uid.slice(0, 6);
+                            document.getElementById('auth-status').className = 'status online';
+                            
+                            // Load user profile if exists
+                            await loadUserProfile();
+                            
+                            // Setup UI
+                            initEventListeners();
+                            switchTab('search');
+                            
+                            // Start listening for players
+                            listenForPlayers();
+                        } catch (error) {
+                            showError('Ошибка анонимной авторизации: ' + error.message);
+                            console.error('Anonymous sign-in error:', error);
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                showError('Ошибка авторизации: ' + error.message);
+                console.error('Auth error:', error);
+            }
+        }
+
+        async function loadUserProfile() {
+            if (!currentUser) return;
+            
+            try {
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    populateProfileForm(userData);
+                }
+            } catch (error) {
+                console.error("Error loading user profile:", error);
+            }
+        }
+
+        async function saveUserProfile() {
+            if (!currentUser) return;
+            
+            const username = document.getElementById('username').value.trim();
+            const mainGame = document.getElementById('main-game').value;
+            const platform = document.getElementById('platform').value;
+            const playTime = document.getElementById('play-time').value;
+            const playStyle = document.getElementById('play-style').value;
+            const mic = document.getElementById('mic').value;
+            const bio = document.getElementById('bio').value.trim();
+
+            if (!username || !mainGame || !platform) {
+                showError('Заполните обязательные поля: имя, игру и платформу');
+                return;
+            }
+
+            hideError();
+
+            try {
+                await setDoc(doc(db, 'users', currentUser.uid), {
+                    username,
+                    mainGame,
+                    platform,
+                    playTime,
+                    playStyle,
+                    mic,
+                    bio,
+                    lastActive: serverTimestamp(),
+                    uid: currentUser.uid
+                }, { merge: true });
+
+                alert('Профиль сохранен!');
+                switchTab('search');
+            } catch (error) {
+                showError('Ошибка сохранения профиля: ' + error.message);
+                console.error(error);
+            }
+        }
+
+        function listenForPlayers() {
+            if (unsubscribePlayers) {
+                unsubscribePlayers();
+            }
+            
+            const playersList = document.getElementById('players-list');
+            playersList.innerHTML = '<div class="empty-state"><div class="loader"></div><p>Поиск игроков...</p></div>';
+            
+            const q = query(collection(db, 'users'), where('uid', '!=', currentUser.uid));
+            
+            unsubscribePlayers = onSnapshot(q, (snapshot) => {
+                const players = [];
+                snapshot.forEach(doc => {
+                    players.push({ id: doc.id, ...doc.data() });
+                });
+                
+                displaySearchResults(players);
+            }, (error) => {
+                showError('Ошибка загрузки игроков: ' + error.message);
+                console.error(error);
+            });
+        }
+
+        function searchPlayers() {
+            const game = document.getElementById('search-game').value;
+            const platform = document.getElementById('search-platform').value;
+            
+            const playersList = document.getElementById('players-list');
+            playersList.innerHTML = '<div class="empty-state"><div class="loader"></div><p>Поиск...</p></div>';
+            
+            let q = query(collection(db, 'users'), where('uid', '!=', currentUser.uid));
+            
+            if (game) {
+                q = query(q, where('mainGame', '==', game));
+            }
+            
+            if (platform) {
+                q = query(q, where('platform', '==', platform));
+            }
+            
+            getDocs(q).then((snapshot) => {
+                const players = [];
+                snapshot.forEach(doc => {
+                    players.push({ id: doc.id, ...doc.data() });
+                });
+                
+                displaySearchResults(players);
+            }).catch((error) => {
+                showError('Ошибка поиска: ' + error.message);
+                console.error(error);
+            });
+        }
+
+        function displaySearchResults(players) {
+            const playersList = document.getElementById('players-list');
+            
+            if (players.length === 0) {
+                playersList.innerHTML = `
+                    <div class="empty-state">
+                        <p>Игроки не найдены. Попробуйте изменить фильтры.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            playersList.innerHTML = '';
+            players.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card';
+                
+                const lastActive = player.lastActive?.toDate ? 
+                    new Date(player.lastActive.toDate()) : 
+                    new Date();
+                const now = new Date();
+                const diffMinutes = (now - lastActive) / (1000 * 60);
+                const isOnline = diffMinutes < 5;
+                
+                playerCard.innerHTML = `
+                    <h3>${player.username} ${isOnline ? '<span style="color: #2ecc71; font-size: 14px;">● онлайн</span>' : ''}</h3>
+                    <div class="player-info">
+                        <div><strong>Игра:</strong> ${getGameName(player.mainGame)}</div>
+                        <div><strong>Платформа:</strong> ${getPlatformName(player.platform)}</div>
+                        <div><strong>Время:</strong> ${getPlayTimeName(player.playTime)}</div>
+                        <div><strong>Стиль:</strong> ${getPlayStyleName(player.playStyle)}</div>
+                        <div><strong>Микрофон:</strong> ${player.mic === 'yes' ? '✅ Есть' : '❌ Нет'}</div>
+                    </div>
+                    ${player.bio ? `<p><em>${player.bio}</em></p>` : ''}
+                `;
+                
+                playerCard.addEventListener('click', () => {
+                    startChatWithPlayer(player);
+                });
+                
+                playersList.appendChild(playerCard);
+            });
+        }
+
+        function startChatWithPlayer(player) {
+            if (!currentUser) return;
+            
+            currentChatPartner = player;
+            document.getElementById('chat-title').textContent = `Чат с ${player.username}`;
+            document.getElementById('message-input').disabled = false;
+            document.getElementById('send-message').disabled = false;
+            
+            // Clear chat container
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.innerHTML = '<div class="empty-state"><div class="loader"></div><p>Загрузка сообщений...</p></div>';
+            
+            // Setup chat listener
+            setupChatListener(currentUser.uid, player.id);
+            
+            switchTab('chat');
+            document.getElementById('message-input').focus();
+        }
+
+        function setupChatListener(userId1, userId2) {
+            if (unsubscribeChats) {
+                unsubscribeChats();
+            }
+            
+            const chatId = [userId1, userId2].sort().join('_');
+            const chatContainer = document.getElementById('chat-container');
+            
+            const messagesRef = collection(db, 'chats', chatId, 'messages');
+            const q = query(messagesRef, orderBy('timestamp'));
+            
+            unsubscribeChats = onSnapshot(q, (snapshot) => {
+                chatContainer.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    chatContainer.innerHTML = `
+                        <div class="empty-state">
+                            <p>Начните диалог! Отправьте первое сообщение.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                snapshot.forEach(doc => {
+                    const msg = doc.data();
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`;
+                    
+                    const time = msg.timestamp?.toDate ? new Date(msg.timestamp.toDate()) : new Date();
+                    
+                    messageDiv.innerHTML = `
+                        <div><strong>${msg.senderId === currentUser.uid ? 'Вы' : msg.senderName}:</strong> ${msg.text}</div>
+                        <div style="font-size: 12px; opacity: 0.7; text-align: right;">${time.toLocaleTimeString()}</div>
+                    `;
+                    chatContainer.appendChild(messageDiv);
+                });
+                
+                // Scroll to bottom
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, (error) => {
+                showError('Ошибка загрузки чата: ' + error.message);
+                console.error(error);
+            });
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const messageText = messageInput.value.trim();
+            
+            if (!messageText || !currentChatPartner || !currentUser) return;
+            
+            const chatId = [currentUser.uid, currentChatPartner.id].sort().join('_');
+            
+            try {
+                // Create chat document if it doesn't exist
+                const chatRef = doc(db, 'chats', chatId);
+                const chatSnap = await getDoc(chatRef);
+                if (!chatSnap.exists()) {
+                    await setDoc(chatRef, {
+                        participants: [currentUser.uid, currentChatPartner.id],
+                        createdAt: serverTimestamp()
                     });
                 }
-            });
-        });
-
-        // Добавляем случайный глюк-эффект к интерактивным точкам при клике
-        document.querySelectorAll('.interactive-dot, .floating-element').forEach(element => {
-            element.addEventListener('click', function() {
-                this.style.animation = 'glitchDot 0.5s ease-in-out';
-                setTimeout(() => {
-                    this.style.animation = '';
-                }, 500);
-            });
-        });
-
-        // Анимация глюка для точек
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes glitchDot {
-                0% { transform: scale(1); opacity: 1; }
-                25% { transform: scale(1.2) translate(2px, 2px); opacity: 0.5; }
-                50% { transform: scale(0.8) translate(-2px, -2px); opacity: 0.3; }
-                75% { transform: scale(1.1) translate(1px, -1px); opacity: 0.7; }
-                100% { transform: scale(1); opacity: 1; }
+                
+                // Add message
+                await addDoc(collection(db, 'chats', chatId, 'messages'), {
+                    text: messageText,
+                    senderId: currentUser.uid,
+                    senderName: document.getElementById('username').value || 'Игрок',
+                    timestamp: serverTimestamp(),
+                    chatId: chatId
+                });
+                
+                messageInput.value = '';
+            } catch (error) {
+                showError('Ошибка отправки сообщения: ' + error.message);
+                console.error(error);
             }
-        `;
-        document.head.appendChild(style);
+        }
+
+        function listenForUserChats() {
+            if (!currentUser) return;
+            
+            const chatsList = document.getElementById('chats-list');
+            chatsList.innerHTML = '<div class="empty-state"><div class="loader"></div><p>Загрузка чатов...</p></div>';
+            
+            // Get all chats for current user
+            const q = query(collection(db, 'chats'), where('participants', 'array-contains', currentUser.uid));
+            
+            onSnapshot(q, async (snapshot) => {
+                const chatPromises = [];
+                
+                snapshot.forEach(doc => {
+                    const chatData = doc.data();
+                    // Get last message
+                    const messagesRef = collection(db, 'chats', doc.id, 'messages');
+                    const lastMessageQuery = query(messagesRef, orderBy('timestamp', 'desc'), limit(1));
+                    
+                    const lastMessagePromise = getDocs(lastMessageQuery).then(msgSnapshot => {
+                        let lastMessage = null;
+                        if (!msgSnapshot.empty) {
+                            lastMessage = msgSnapshot.docs[0].data();
+                        }
+                        return { chatId: doc.id, chatData, lastMessage };
+                    });
+                    
+                    chatPromises.push(lastMessagePromise);
+                });
+                
+                Promise.all(chatPromises).then(chats => {
+                    displayUserChats(chats);
+                });
+            });
+        }
+
+        function displayUserChats(chats) {
+            const chatsList = document.getElementById('chats-list');
+            
+            if (chats.length === 0) {
+                chatsList.innerHTML = `
+                    <div class="empty-state">
+                        <p>У вас пока нет чатов. Найдите игроков через поиск!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            chatsList.innerHTML = '';
+            chats.forEach(chatItem => {
+                // Find partner ID
+                const partnerId = chatItem.chatData.participants.find(id => id !== currentUser.uid);
+                
+                // Get partner info
+                getDoc(doc(db, 'users', partnerId)).then(partnerDoc => {
+                    if (!partnerDoc.exists()) return;
+                    
+                    const partner = partnerDoc.data();
+                    const chatDiv = document.createElement('div');
+                    chatDiv.className = 'player-card';
+                    
+                    chatDiv.innerHTML = `
+                        <h3>${partner.username}</h3>
+                        <div class="player-info">
+                            <div><strong>Игра:</strong> ${getGameName(partner.mainGame)}</div>
+                            <div><strong>Платформа:</strong> ${getPlatformName(partner.platform)}</div>
+                            ${chatItem.lastMessage ? `
+                                <div><strong>Последнее сообщение:</strong></div>
+                                <div><em>${chatItem.lastMessage.text.length > 50 ? chatItem.lastMessage.text.substring(0, 50) + '...' : chatItem.lastMessage.text}</em></div>
+                                <div style="font-size: 12px; opacity: 0.7;">${new Date(chatItem.lastMessage.timestamp.toDate()).toLocaleTimeString()}</div>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    chatDiv.addEventListener('click', () => {
+                        currentChatPartner = { id: partnerId, ...partner };
+                        startChatWithPlayer(currentChatPartner);
+                    });
+                    
+                    chatsList.appendChild(chatDiv);
+                });
+            });
+        }
+
+        // Helper methods to get display names
+        function getGameName(gameKey) {
+            const games = {
+                'baldurs-gate-3': 'Baldur\'s Gate 3',
+                'it-takes-two': 'It Takes Two',
+                'deep-rock-galactic': 'Deep Rock Galactic',
+                'overcooked': 'Overcooked 2',
+                'monster-hunter': 'Monster Hunter',
+                'elden-ring': 'Elden Ring',
+                'other': 'Другая игра'
+            };
+            return games[gameKey] || gameKey;
+        }
+
+        function getPlatformName(platformKey) {
+            const platforms = {
+                'pc': 'PC (Steam/Epic)',
+                'ps5': 'PlayStation 5',
+                'xbox': 'Xbox Series X/S',
+                'switch': 'Nintendo Switch'
+            };
+            return platforms[platformKey] || platformKey;
+        }
+
+        function getPlayTimeName(timeKey) {
+            const times = {
+                'evenings': 'Вечера (после 19:00)',
+                'weekends': 'Выходные',
+                'flexible': 'Гибкий график'
+            };
+            return times[timeKey] || timeKey;
+        }
+
+        function getPlayStyleName(styleKey) {
+            const styles = {
+                'casual': 'Казуал (для фана)',
+                'hardcore': 'Хардкор (100% прохождение)',
+                'explorer': 'Исследователь (собираю всё)'
+            };
+            return styles[styleKey] || styleKey;
+        }
+
+        // UI Functions
+        function initEventListeners() {
+            // Tab switching
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchTab(tab.dataset.tab);
+                });
+            });
+
+            // Search button
+            document.getElementById('search-button').addEventListener('click', () => {
+                searchPlayers();
+            });
+
+            // Save profile button
+            document.getElementById('save-profile').addEventListener('click', () => {
+                saveUserProfile();
+            });
+
+            // Send message button
+            document.getElementById('send-message').addEventListener('click', () => {
+                sendMessage();
+            });
+
+            // Enter key in message input
+            document.getElementById('message-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            // Special cases
+            if (tabName === 'chat') {
+                listenForUserChats();
+            } else if (tabName === 'search') {
+                listenForPlayers();
+            }
+        }
+
+        function populateProfileForm(userData) {
+            if (!userData) return;
+            document.getElementById('username').value = userData.username || '';
+            document.getElementById('main-game').value = userData.mainGame || '';
+            document.getElementById('platform').value = userData.platform || '';
+            document.getElementById('play-time').value = userData.playTime || '';
+            document.getElementById('play-style').value = userData.playStyle || '';
+            document.getElementById('mic').value = userData.mic || 'yes';
+            document.getElementById('bio').value = userData.bio || '';
+        }
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
     </script>
 </body>
-</html> 
+</html>
+```
