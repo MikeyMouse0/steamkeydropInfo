@@ -164,6 +164,15 @@
             box-shadow: 0 6px 15px rgba(255, 65, 108, 0.4);
         }
 
+        .btn-next {
+            background: linear-gradient(90deg, #FF9500, #FF5E3A);
+            box-shadow: 0 4px 10px rgba(255, 149, 0, 0.3);
+        }
+
+        .btn-next:hover {
+            box-shadow: 0 6px 15px rgba(255, 149, 0, 0.4);
+        }
+
         .chat-area {
             flex: 1;
             display: flex;
@@ -386,6 +395,20 @@
             font-size: 0.75rem;
         }
 
+        .chat-controls {
+            display: flex;
+            gap: 10px;
+            padding: 10px 15px;
+            background: #111111;
+            border-top: 1px solid #333;
+        }
+
+        .chat-controls .btn {
+            margin-bottom: 0;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+        }
+
         /* Мобильная адаптация */
         @media (max-width: 768px) {
             body {
@@ -478,6 +501,16 @@
             
             .connecting-screen p {
                 font-size: 0.9rem;
+            }
+            
+            .chat-controls {
+                padding: 8px 12px;
+                gap: 8px;
+            }
+            
+            .chat-controls .btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
             }
         }
 
@@ -664,6 +697,15 @@
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
+                    
+                    <div class="chat-controls">
+                        <button id="nextBtn" class="btn btn-next">
+                            <i class="fas fa-user-friends"></i> Следующий
+                        </button>
+                        <button id="disconnectChatBtn" class="btn btn-disconnect">
+                            <i class="fas fa-times"></i> Отключиться
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -674,7 +716,7 @@
         const firebaseConfig = {
             apiKey: "AIzaSyAgcGshM7QlRy_lE-jeVvv8X5p9bDORy0w",
             authDomain: "gefd-88f41.firebaseapp.com",
-            databaseURL: "https://gefd-88f41-default-rtdb.firebaseio.com", // Добавлен URL базы данных
+            databaseURL: "https://gefd-88f41-default-rtdb.firebaseio.com",
             projectId: "gefd-88f41",
             storageBucket: "gefd-88f41.firebasestorage.app",
             messagingSenderId: "188695764382",
@@ -696,6 +738,8 @@
         const saveProfileBtn = document.getElementById('saveProfile');
         const connectBtn = document.getElementById('connectBtn');
         const disconnectBtn = document.getElementById('disconnectBtn');
+        const disconnectChatBtn = document.getElementById('disconnectChatBtn');
+        const nextBtn = document.getElementById('nextBtn');
         const connectingScreen = document.getElementById('connectingScreen');
         const chatScreen = document.getElementById('chatScreen');
         const messagesContainer = document.getElementById('messagesContainer');
@@ -715,6 +759,7 @@
         let searchListener = null;
         let messageListener = null;
         let partnerDisconnectListener = null;
+        let processedMessageIds = new Set(); // Для предотвращения дублирования сообщений
 
         // Show notification
         function showNotification(message, type = 'info') {
@@ -797,11 +842,33 @@
             startSearch();
         });
 
-        // Disconnect
+        // Disconnect from main screen
         disconnectBtn.addEventListener('click', () => {
-            stopSearch();
-            stopMessageListener();
-            stopPartnerDisconnectListener();
+            disconnectFromChat();
+            connectingScreen.classList.add('hidden');
+            chatScreen.classList.add('hidden');
+            connectBtn.classList.remove('hidden');
+            disconnectBtn.classList.add('hidden');
+            messagesContainer.innerHTML = '';
+            currentPartner = null;
+            showNotification('Вы отключились от чата', 'info');
+        });
+
+        // Disconnect from chat screen
+        disconnectChatBtn.addEventListener('click', () => {
+            disconnectFromChat();
+            connectingScreen.classList.add('hidden');
+            chatScreen.classList.add('hidden');
+            connectBtn.classList.remove('hidden');
+            disconnectBtn.classList.add('hidden');
+            messagesContainer.innerHTML = '';
+            currentPartner = null;
+            showNotification('Вы отключились от чата', 'info');
+        });
+
+        // Next partner
+        nextBtn.addEventListener('click', () => {
+            if (!currentPartner) return;
             
             // Уведомляем партнера об отключении
             if (currentPartner) {
@@ -811,13 +878,16 @@
                 }).catch(console.error);
             }
             
-            connectingScreen.classList.add('hidden');
-            chatScreen.classList.add('hidden');
-            connectBtn.classList.remove('hidden');
-            disconnectBtn.classList.add('hidden');
+            // Очищаем текущий чат
             messagesContainer.innerHTML = '';
-            currentPartner = null;
-            showNotification('Вы отключились от чата', 'info');
+            processedMessageIds.clear();
+            stopMessageListener();
+            stopPartnerDisconnectListener();
+            
+            // Ищем нового партнера
+            connectingScreen.classList.remove('hidden');
+            chatScreen.classList.add('hidden');
+            startSearch();
         });
 
         // Start searching for partner
@@ -890,6 +960,9 @@
             connectingScreen.classList.add('hidden');
             chatScreen.classList.remove('hidden');
             
+            // Очищаем обработанные сообщения
+            processedMessageIds.clear();
+            
             // Setup message listeners
             setupMessageListeners();
             
@@ -899,6 +972,9 @@
             // Send welcome message
             addMessage(`Собеседник ${partner.name} найден! Начните общение.`, 'system-message');
             showNotification(`Собеседник ${partner.name} найден!`, 'success');
+            
+            // Прокручиваем вниз
+            scrollToBottom();
         }
 
         // Setup message listeners
@@ -910,8 +986,10 @@
             messageListener = onValue(messagesRef, (snapshot) => {
                 const messages = snapshot.val();
                 if (messages) {
-                    Object.values(messages).forEach(msg => {
-                        if (msg.senderId !== currentUser.id) {
+                    Object.entries(messages).forEach(([messageId, msg]) => {
+                        // Проверяем, не обрабатывали ли мы это сообщение
+                        if (!processedMessageIds.has(messageId) && msg.senderId !== currentUser.id) {
+                            processedMessageIds.add(messageId);
                             displayMessage(msg.text, 'received');
                         }
                     });
@@ -952,6 +1030,26 @@
             }
         }
 
+        // Disconnect from chat
+        function disconnectFromChat() {
+            stopSearch();
+            stopMessageListener();
+            stopPartnerDisconnectListener();
+            
+            // Уведомляем партнера об отключении
+            if (currentPartner) {
+                const disconnectRef = ref(database, `disconnects/${getChatId()}/${currentUser.id}`);
+                set(disconnectRef, {
+                    timestamp: Date.now()
+                }).catch(console.error);
+            }
+            
+            // Удаляем пользователя из очереди поиска
+            if (currentUser.region) {
+                remove(ref(database, `search_queue/${currentUser.region}/${currentUser.id}`)).catch(console.error);
+            }
+        }
+
         // Get chat ID (sorted user IDs)
         function getChatId() {
             const ids = [currentUser.id, currentPartner.id].sort();
@@ -988,7 +1086,7 @@
             messageDiv.className = `message ${type}`;
             messageDiv.textContent = text;
             messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            scrollToBottom();
         }
 
         // Add system message
@@ -997,7 +1095,14 @@
             messageDiv.className = `message ${className}`;
             messageDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${text}`;
             messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            scrollToBottom();
+        }
+
+        // Прокрутка вниз
+        function scrollToBottom() {
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
         }
 
         // Event listeners
@@ -1013,22 +1118,7 @@
         
         // Обработка закрытия вкладки
         window.addEventListener('beforeunload', () => {
-            stopSearch();
-            stopMessageListener();
-            stopPartnerDisconnectListener();
-            
-            // Удаляем пользователя из очереди поиска
-            if (currentUser.region) {
-                remove(ref(database, `search_queue/${currentUser.region}/${currentUser.id}`)).catch(console.error);
-            }
-            
-            // Уведомляем партнера об отключении
-            if (currentPartner) {
-                const disconnectRef = ref(database, `disconnects/${getChatId()}/${currentUser.id}`);
-                set(disconnectRef, {
-                    timestamp: Date.now()
-                }).catch(console.error);
-            }
+            disconnectFromChat();
         });
     </script>
 </body>
