@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -73,6 +74,7 @@
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
+            overflow-y: auto;
         }
 
         .profile-section {
@@ -760,6 +762,8 @@
         let messageListener = null;
         let partnerDisconnectListener = null;
         let processedMessageIds = new Set(); // Для предотвращения дублирования сообщений
+        let chatCleanupTimer = null;
+        let autoScroll = true;
 
         // Show notification
         function showNotification(message, type = 'info') {
@@ -975,6 +979,9 @@
             
             // Прокручиваем вниз
             scrollToBottom();
+            
+            // Устанавливаем таймер для очистки чата после завершения сессии
+            clearTimeout(chatCleanupTimer);
         }
 
         // Setup message listeners
@@ -1044,10 +1051,19 @@
                 }).catch(console.error);
             }
             
+            // Удаляем историю сообщений из базы данных
+            if (currentPartner) {
+                const messagesRef = ref(database, `messages/${getChatId()}`);
+                remove(messagesRef).catch(console.error);
+            }
+            
             // Удаляем пользователя из очереди поиска
             if (currentUser.region) {
                 remove(ref(database, `search_queue/${currentUser.region}/${currentUser.id}`)).catch(console.error);
             }
+            
+            // Очищаем таймер
+            clearTimeout(chatCleanupTimer);
         }
 
         // Get chat ID (sorted user IDs)
@@ -1086,7 +1102,11 @@
             messageDiv.className = `message ${type}`;
             messageDiv.textContent = text;
             messagesContainer.appendChild(messageDiv);
-            scrollToBottom();
+            
+            // Прокручиваем вниз только если пользователь не прокручивал вверх
+            if (autoScroll) {
+                scrollToBottom();
+            }
         }
 
         // Add system message
@@ -1095,7 +1115,11 @@
             messageDiv.className = `message ${className}`;
             messageDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${text}`;
             messagesContainer.appendChild(messageDiv);
-            scrollToBottom();
+            
+            // Прокручиваем вниз только если пользователь не прокручивал вверх
+            if (autoScroll) {
+                scrollToBottom();
+            }
         }
 
         // Прокрутка вниз
@@ -1105,12 +1129,23 @@
             }, 100);
         }
 
+        // Проверка, находится ли пользователь внизу чата
+        function isScrolledToBottom() {
+            return messagesContainer.scrollHeight - messagesContainer.clientHeight <= messagesContainer.scrollTop + 1;
+        }
+
         // Event listeners
         sendBtn.addEventListener('click', sendMessage);
         messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessage();
             }
+        });
+
+        // Отслеживаем прокрутку чата
+        messagesContainer.addEventListener('scroll', () => {
+            // Если пользователь прокрутил вниз, включаем автопрокрутку
+            autoScroll = isScrolledToBottom();
         });
 
         // Initialize
@@ -1122,4 +1157,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
