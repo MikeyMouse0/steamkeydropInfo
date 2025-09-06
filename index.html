@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -21,7 +20,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         .container {
@@ -40,15 +39,15 @@
         .header {
             background: linear-gradient(90deg, #000000, #222222);
             color: #ffffff;
-            padding: 25px;
+            padding: 20px;
             text-align: center;
             position: relative;
             border-bottom: 2px solid #333;
         }
 
         .header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
             background: linear-gradient(90deg, #ffffff, #cccccc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -57,7 +56,7 @@
 
         .header p {
             opacity: 0.8;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .content {
@@ -67,10 +66,10 @@
         }
 
         .sidebar {
-            width: 280px;
+            width: 260px;
             background: #111111;
             border-right: 1px solid #333;
-            padding: 25px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
@@ -79,20 +78,20 @@
         .profile-section {
             background: #1a1a1a;
             border-radius: 15px;
-            padding: 20px;
+            padding: 18px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border: 1px solid #333;
             animation: fadeInUp 0.5s ease;
         }
 
         .profile-section h3 {
             color: #ffffff;
-            margin-bottom: 20px;
-            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .profile-section h3 i {
@@ -100,23 +99,23 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 500;
             color: #cccccc;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .form-group select, .form-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: 1px solid #333;
-            border-radius: 10px;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
             background: #222222;
             color: #ffffff;
             transition: all 0.3s ease;
@@ -125,31 +124,31 @@
         .form-group select:focus, .form-group input:focus {
             outline: none;
             border-color: #4A90E2;
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
         }
 
         .btn {
             background: linear-gradient(90deg, #4A90E2, #5E60CE);
             color: white;
             border: none;
-            padding: 14px 25px;
-            border-radius: 10px;
+            padding: 12px 20px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
             width: 100%;
-            font-size: 1.1rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
-            margin-bottom: 15px;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+            margin-bottom: 12px;
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
         }
 
         .btn:active {
@@ -158,11 +157,11 @@
 
         .btn-disconnect {
             background: linear-gradient(90deg, #ff416c, #ff4b2b);
-            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.3);
+            box-shadow: 0 4px 10px rgba(255, 65, 108, 0.3);
         }
 
         .btn-disconnect:hover {
-            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.4);
+            box-shadow: 0 6px 15px rgba(255, 65, 108, 0.4);
         }
 
         .chat-area {
@@ -174,7 +173,7 @@
 
         .chat-header {
             background: #111111;
-            padding: 20px;
+            padding: 15px 20px;
             border-bottom: 1px solid #333;
             display: flex;
             align-items: center;
@@ -184,45 +183,46 @@
         .partner-info {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .status-indicator {
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: #4CAF50;
-            box-shadow: 0 0 10px #4CAF50;
+            box-shadow: 0 0 8px #4CAF50;
         }
 
         .partner-details h3 {
-            font-size: 1.2rem;
-            margin-bottom: 3px;
+            font-size: 1.1rem;
+            margin-bottom: 2px;
         }
 
         .partner-details p {
             color: #888;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .chat-messages {
             flex: 1;
-            padding: 25px;
+            padding: 20px;
             overflow-y: auto;
             background: #0a0a0a;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .message {
             max-width: 75%;
-            padding: 15px 20px;
-            border-radius: 18px;
+            padding: 12px 16px;
+            border-radius: 16px;
             position: relative;
             animation: fadeIn 0.3s ease;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            line-height: 1.5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            line-height: 1.4;
+            font-size: 0.95rem;
         }
 
         @keyframes fadeIn {
@@ -255,26 +255,26 @@
             color: #aaa !important;
             align-self: center;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             max-width: 80%;
             font-style: italic;
             border: 1px solid #444;
         }
 
         .chat-input {
-            padding: 20px;
+            padding: 15px;
             background: #111111;
             border-top: 1px solid #333;
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
 
         .chat-input input {
             flex: 1;
-            padding: 15px 20px;
+            padding: 12px 16px;
             border: 1px solid #333;
-            border-radius: 30px;
-            font-size: 1.1rem;
+            border-radius: 25px;
+            font-size: 1rem;
             background: #222222;
             color: #ffffff;
             transition: all 0.3s ease;
@@ -283,28 +283,28 @@
         .chat-input input:focus {
             outline: none;
             border-color: #4A90E2;
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
         }
 
         .chat-input button {
             background: linear-gradient(90deg, #4A90E2, #5E60CE);
             color: white;
             border: none;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
         }
 
         .chat-input button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
         }
 
         .connecting-screen {
@@ -319,13 +319,13 @@
         }
 
         .spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(74, 144, 226, 0.2);
-            border-top: 5px solid #4A90E2;
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(74, 144, 226, 0.2);
+            border-top: 4px solid #4A90E2;
             border-radius: 50%;
             animation: spin 1.5s linear infinite;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         @keyframes spin {
@@ -339,19 +339,21 @@
 
         .notification {
             position: fixed;
-            top: 30px;
-            right: 30px;
-            padding: 18px 25px;
-            border-radius: 12px;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
             color: white;
             font-weight: 500;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
             z-index: 1000;
             animation: slideIn 0.4s ease;
             display: flex;
             align-items: center;
-            gap: 12px;
-            border-left: 5px solid;
+            gap: 10px;
+            border-left: 4px solid;
+            font-size: 0.9rem;
+            max-width: 300px;
         }
 
         @keyframes slideIn {
@@ -379,12 +381,34 @@
         .region-tag {
             background: #4A90E2;
             color: white;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 15px;
+            font-size: 0.75rem;
         }
 
+        /* Мобильная адаптация */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                height: 95vh;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header p {
+                font-size: 0.8rem;
+            }
+            
             .content {
                 flex-direction: column;
             }
@@ -393,15 +417,167 @@
                 width: 100%;
                 border-right: none;
                 border-bottom: 1px solid #333;
+                padding: 15px;
             }
             
-            .container {
-                height: auto;
-                min-height: 90vh;
+            .profile-section {
+                padding: 15px;
+            }
+            
+            .profile-section h3 {
+                font-size: 1.1rem;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.95rem;
+            }
+            
+            .chat-header {
+                padding: 12px 15px;
+            }
+            
+            .partner-details h3 {
+                font-size: 1rem;
+            }
+            
+            .partner-details p {
+                font-size: 0.8rem;
+            }
+            
+            .chat-messages {
+                padding: 15px;
+                gap: 10px;
             }
             
             .message {
                 max-width: 85%;
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+            
+            .chat-input {
+                padding: 12px;
+                gap: 10px;
+            }
+            
+            .chat-input input {
+                padding: 10px 14px;
+                font-size: 0.95rem;
+            }
+            
+            .chat-input button {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+            
+            .connecting-screen h2 {
+                font-size: 1.3rem;
+            }
+            
+            .connecting-screen p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .header {
+                padding: 12px;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .sidebar {
+                padding: 12px;
+            }
+            
+            .profile-section {
+                padding: 12px;
+            }
+            
+            .form-group label {
+                font-size: 0.85rem;
+            }
+            
+            .form-group select, .form-group input {
+                font-size: 0.9rem;
+                padding: 8px 10px;
+            }
+            
+            .btn {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            
+            .chat-header {
+                padding: 10px 12px;
+            }
+            
+            .partner-info {
+                gap: 8px;
+            }
+            
+            .status-indicator {
+                width: 10px;
+                height: 10px;
+            }
+            
+            .partner-details h3 {
+                font-size: 0.95rem;
+            }
+            
+            .partner-details p {
+                font-size: 0.75rem;
+            }
+            
+            .region-tag {
+                font-size: 0.7rem;
+                padding: 1px 6px;
+            }
+            
+            .chat-messages {
+                padding: 12px;
+            }
+            
+            .message {
+                max-width: 90%;
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .system-message {
+                font-size: 0.8rem;
+            }
+            
+            .chat-input {
+                padding: 10px;
+            }
+            
+            .chat-input input {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .chat-input button {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .notification {
+                top: 15px;
+                right: 15px;
+                padding: 12px 15px;
+                font-size: 0.85rem;
+                max-width: 250px;
             }
         }
     </style>
@@ -435,6 +611,11 @@
                             <option value="Самара">Самара</option>
                             <option value="Омск">Омск</option>
                             <option value="Ростов-на-Дону">Ростов-на-Дону</option>
+                            <option value="Уфа">Уфа</option>
+                            <option value="Красноярск">Красноярск</option>
+                            <option value="Воронеж">Воронеж</option>
+                            <option value="Пермь">Пермь</option>
+                            <option value="Волгоград">Волгоград</option>
                         </select>
                     </div>
                     <button id="saveProfile" class="btn">
@@ -493,6 +674,7 @@
         const firebaseConfig = {
             apiKey: "AIzaSyAgcGshM7QlRy_lE-jeVvv8X5p9bDORy0w",
             authDomain: "gefd-88f41.firebaseapp.com",
+            databaseURL: "https://gefd-88f41-default-rtdb.firebaseio.com", // Добавлен URL базы данных
             projectId: "gefd-88f41",
             storageBucket: "gefd-88f41.firebasestorage.app",
             messagingSenderId: "188695764382",
@@ -502,7 +684,7 @@
 
         // Initialize Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, off, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
@@ -532,6 +714,7 @@
         let currentPartner = null;
         let searchListener = null;
         let messageListener = null;
+        let partnerDisconnectListener = null;
 
         // Show notification
         function showNotification(message, type = 'info') {
@@ -618,6 +801,16 @@
         disconnectBtn.addEventListener('click', () => {
             stopSearch();
             stopMessageListener();
+            stopPartnerDisconnectListener();
+            
+            // Уведомляем партнера об отключении
+            if (currentPartner) {
+                const disconnectRef = ref(database, `disconnects/${getChatId()}/${currentUser.id}`);
+                set(disconnectRef, {
+                    timestamp: Date.now()
+                }).catch(console.error);
+            }
+            
             connectingScreen.classList.add('hidden');
             chatScreen.classList.add('hidden');
             connectBtn.classList.remove('hidden');
@@ -700,6 +893,9 @@
             // Setup message listeners
             setupMessageListeners();
             
+            // Setup partner disconnect listener
+            setupPartnerDisconnectListener();
+            
             // Send welcome message
             addMessage(`Собеседник ${partner.name} найден! Начните общение.`, 'system-message');
             showNotification(`Собеседник ${partner.name} найден!`, 'success');
@@ -728,6 +924,31 @@
             if (messageListener) {
                 off(messageListener);
                 messageListener = null;
+            }
+        }
+
+        // Setup partner disconnect listener
+        function setupPartnerDisconnectListener() {
+            stopPartnerDisconnectListener();
+            
+            const disconnectRef = ref(database, `disconnects/${getChatId()}`);
+            partnerDisconnectListener = onValue(disconnectRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data && Object.keys(data).some(id => id !== currentUser.id)) {
+                    addMessage('Собеседник отключился от чата', 'system-message');
+                    showNotification('Собеседник отключился от чата', 'info');
+                    
+                    // Очищаем данные отключения
+                    remove(disconnectRef).catch(console.error);
+                }
+            });
+        }
+
+        // Stop partner disconnect listener
+        function stopPartnerDisconnectListener() {
+            if (partnerDisconnectListener) {
+                off(partnerDisconnectListener);
+                partnerDisconnectListener = null;
             }
         }
 
@@ -789,6 +1010,26 @@
 
         // Initialize
         loadProfile();
+        
+        // Обработка закрытия вкладки
+        window.addEventListener('beforeunload', () => {
+            stopSearch();
+            stopMessageListener();
+            stopPartnerDisconnectListener();
+            
+            // Удаляем пользователя из очереди поиска
+            if (currentUser.region) {
+                remove(ref(database, `search_queue/${currentUser.region}/${currentUser.id}`)).catch(console.error);
+            }
+            
+            // Уведомляем партнера об отключении
+            if (currentPartner) {
+                const disconnectRef = ref(database, `disconnects/${getChatId()}/${currentUser.id}`);
+                set(disconnectRef, {
+                    timestamp: Date.now()
+                }).catch(console.error);
+            }
+        });
     </script>
 </body>
     </html>
